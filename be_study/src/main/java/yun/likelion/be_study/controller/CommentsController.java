@@ -15,7 +15,7 @@ import yun.likelion.be_study.service.CommentsService;
 @RequestMapping("/api/boards/{boardId}/comments")
 @Tag(name = "Comments", description = "댓글 관련 API")
 public class CommentsController {
-    private CommentsService commentsService;
+    private final CommentsService commentsService;
 
     public CommentsController(CommentsService commentsService) {
         this.commentsService = commentsService;

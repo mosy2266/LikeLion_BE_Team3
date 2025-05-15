@@ -2,7 +2,6 @@ package yun.likelion.be_study.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,7 @@ public class Boards {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
 
-    @NotNull
+    @NotBlank
     private String name;
 
     @NotBlank(message = "제목은 반드시 입력해야 합니다.")

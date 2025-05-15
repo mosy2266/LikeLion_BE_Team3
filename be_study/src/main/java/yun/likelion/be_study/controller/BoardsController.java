@@ -10,22 +10,17 @@ import yun.likelion.be_study.dto.boards.BoardsCreateRequestDto;
 import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
-import yun.likelion.be_study.dto.comments.CommentsResponseDto;
 import yun.likelion.be_study.service.BoardsService;
 import yun.likelion.be_study.service.CommentsService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
 @Tag(name = "Boards", description = "게시판 관련 API")
 public class BoardsController {
-    private BoardsService boardsService;
-    private CommentsService commentsService;
+    private final BoardsService boardsService;
 
-    public BoardsController(BoardsService boardsService,  CommentsService commentsService) {
+    public BoardsController(BoardsService boardsService) {
         this.boardsService = boardsService;
-        this.commentsService = commentsService;
     }
 
     //게시글 목록

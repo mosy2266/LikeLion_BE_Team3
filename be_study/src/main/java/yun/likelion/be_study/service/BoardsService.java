@@ -9,7 +9,6 @@ import yun.likelion.be_study.dto.boards.BoardsCreateRequestDto;
 import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
-import yun.likelion.be_study.dto.comments.CommentsResponseDto;
 import yun.likelion.be_study.entity.Boards;
 import yun.likelion.be_study.entity.Comments;
 import yun.likelion.be_study.repository.BoardsRepository;
