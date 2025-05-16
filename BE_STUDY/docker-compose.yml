@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.4.4
+    container_name: be-study-database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command:
+      --port=${DB_PORT} --max_allowed_packet=32M
+    expose:
+      - ${DB_PORT}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: no
+    volumes:
+      - be-study-database:/var/lib/mysql
+    env_file:
+      - .env  # .env 파일을 이용해 환경변수들을 로드합니다.
+
+volumes:
+  be-study-database:
