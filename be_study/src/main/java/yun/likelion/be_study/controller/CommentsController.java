@@ -45,8 +45,22 @@ public class CommentsController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long boardId,
                                                 @PathVariable Long commentId,
-                                                @RequestBody@Valid CommentsDeleteRequestDto dto) {
+                                                @RequestBody @Valid CommentsDeleteRequestDto dto) {
         commentsService.deleteComment(boardId, commentId, dto.getPassword());
         return ResponseEntity.ok("댓글이 삭제되었습니다.");
+    }
+
+    //댓글 좋아요
+    @PostMapping("/{commentId}/likes")
+    public ResponseEntity<Long> like(@PathVariable Long boardId, @PathVariable Long commentId) {
+        long updatedCount = commentsService.incrementLike(boardId, commentId);
+        return ResponseEntity.ok(updatedCount);
+    }
+
+    //댓글 좋아요 취소
+    @DeleteMapping("/{commentId}/likes")
+    public ResponseEntity<Long> unLike(@PathVariable Long boardId, @PathVariable Long commentId) {
+        long updatedCount = commentsService.decrementLike(boardId, commentId);
+        return ResponseEntity.ok(updatedCount);
     }
 }

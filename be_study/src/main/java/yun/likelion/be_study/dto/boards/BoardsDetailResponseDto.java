@@ -19,14 +19,17 @@ public class BoardsDetailResponseDto {
     private String name;
     private String title;
     private String content;
+    private long likeCount;
     private List<CommentsResponseDto> comments;
 
+    //Boards 엔티티를 DTO로 변환해주는 정적 메서드
     public static BoardsDetailResponseDto from(BoardsSimpleResponseDto dto, List<Comments> comments) {
         return BoardsDetailResponseDto.builder()
                 .boardId(dto.getBoardsId())
                 .name(dto.getName())
                 .title(dto.getTitle())
                 .content(dto.getContent())
+                .likeCount(dto.getLikeCount())
                 .comments(comments.stream()
                         .map(CommentsResponseDto::from)
                         .collect(Collectors.toList()))

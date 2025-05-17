@@ -69,7 +69,30 @@ public class CommentsService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        //댓글 삭제
         commentsRepository.delete(comment);
+    }
+
+    //댓글 좋아요
+    @Transactional
+    public long incrementLike(Long boardId, Long commentId) {
+        Comments comment = commentsRepository.findByCommentIdAndBoard_BoardId(commentId, boardId)
+                .orElseThrow(() ->  new EntityNotFoundException("해당 댓글이 게시글에 존재하지 않습니다. 댓글 id : " + commentId));
+
+        comment.setLikeCount(comment.getLikeCount() + 1);
+
+        return comment.getLikeCount();
+    }
+
+    //댓글 좋아요 취소
+    @Transactional
+    public long decrementLike(Long boardId, Long commentId) {
+        Comments comment = commentsRepository.findByCommentIdAndBoard_BoardId(commentId, boardId)
+                .orElseThrow(() ->  new EntityNotFoundException("해당 댓글이 게시글에 존재하지 않습니다. 댓글 id : " + commentId));
+
+        if (comment.getLikeCount() > 0) {
+            comment.setLikeCount(comment.getLikeCount() - 1);
+        }
+
+        return comment.getLikeCount();
     }
 }

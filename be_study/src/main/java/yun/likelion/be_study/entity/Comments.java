@@ -29,4 +29,6 @@ public class Comments {
 
     @NotBlank
     private String content;
+
+    private long likeCount = 0;
 }

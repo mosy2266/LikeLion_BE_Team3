@@ -81,4 +81,26 @@ public class BoardsService {
         }
         boardsRepository.deleteById(boardId);
     }
+
+    //게시글 좋아요
+    @Transactional
+    public long incrementLike(Long boardId) {
+        Boards board = boardsRepository.findById(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+        board.setLikeCount(board.getLikeCount() + 1);
+
+        return board.getLikeCount();
+    }
+
+    //게시글 좋아요 취소
+    @Transactional
+    public long decrementLike(Long boardId) {
+        Boards board = boardsRepository.findById(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+        if (board.getLikeCount() > 0) {
+            board.setLikeCount(board.getLikeCount() - 1);
+        }
+
+        return board.getLikeCount();
+    }
 }

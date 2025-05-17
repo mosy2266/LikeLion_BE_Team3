@@ -63,4 +63,18 @@ public class BoardsController {
         boardsService.deleteBoard(boardId);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
+
+    //게시글 좋아요
+    @PostMapping("/{boardId}/likes")
+    public ResponseEntity<Long> like(@PathVariable Long boardId) {
+        long updatedCount = boardsService.incrementLike(boardId);
+        return ResponseEntity.ok(updatedCount);
+    }
+
+    //게시글 좋아요 취소
+    @DeleteMapping("/{boardId}/likes")
+    public ResponseEntity<Long> unlike(@PathVariable Long boardId) {
+        long updatedCount = boardsService.decrementLike(boardId);
+        return ResponseEntity.ok(updatedCount);
+    }
 }

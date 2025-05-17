@@ -23,4 +23,6 @@ public class Boards {
 
     @NotBlank(message = "내용은 반드시 입력해야 합니다.")
     private String content;
+
+    private long likeCount = 0;
 }
