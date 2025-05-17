@@ -51,6 +51,7 @@ public class CommentsController {
     }
 
     //댓글 좋아요
+    @Operation(summary = "좋아요")
     @PostMapping("/{commentId}/likes")
     public ResponseEntity<Long> like(@PathVariable Long boardId, @PathVariable Long commentId) {
         long updatedCount = commentsService.incrementLike(boardId, commentId);
@@ -58,6 +59,7 @@ public class CommentsController {
     }
 
     //댓글 좋아요 취소
+    @Operation(summary = "좋아요 취소")
     @DeleteMapping("/{commentId}/likes")
     public ResponseEntity<Long> unLike(@PathVariable Long boardId, @PathVariable Long commentId) {
         long updatedCount = commentsService.decrementLike(boardId, commentId);

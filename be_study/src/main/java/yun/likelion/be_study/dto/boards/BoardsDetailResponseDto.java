@@ -20,6 +20,7 @@ public class BoardsDetailResponseDto {
     private String title;
     private String content;
     private long likeCount;
+    private long viewCount;
     private List<CommentsResponseDto> comments;
 
     //Boards 엔티티를 DTO로 변환해주는 정적 메서드
@@ -30,6 +31,7 @@ public class BoardsDetailResponseDto {
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .likeCount(dto.getLikeCount())
+                .viewCount(dto.getViewCount())
                 .comments(comments.stream()
                         .map(CommentsResponseDto::from)
                         .collect(Collectors.toList()))

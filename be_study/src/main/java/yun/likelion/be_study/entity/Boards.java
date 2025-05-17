@@ -24,5 +24,9 @@ public class Boards {
     @NotBlank(message = "내용은 반드시 입력해야 합니다.")
     private String content;
 
+    @Column(name = "like_count")
     private long likeCount = 0;
+
+    @Column(name = "view_count")
+    private long viewCount = 0;
 }

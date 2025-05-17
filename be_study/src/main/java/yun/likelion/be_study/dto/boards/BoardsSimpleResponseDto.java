@@ -16,6 +16,7 @@ public class BoardsSimpleResponseDto {
     private String title;
     private String content;
     private long likeCount;
+    private long viewCount;
 
     //Boards 엔티티를 DTO로 변환해주는 정적 메서드
     public static BoardsSimpleResponseDto from(Boards board) {
@@ -25,6 +26,7 @@ public class BoardsSimpleResponseDto {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .likeCount(board.getLikeCount())
+                .viewCount(board.getViewCount())
                 .build();
     }
 }
