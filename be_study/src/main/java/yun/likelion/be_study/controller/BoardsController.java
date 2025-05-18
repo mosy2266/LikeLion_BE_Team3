@@ -29,9 +29,11 @@ public class BoardsController {
     //게시글 목록
     @Operation(summary = "게시글 목록 조회")
     @GetMapping
-    //쿼리스트링으로 /api/boards?page=0&size=5 이런 식으로 파라미터 넘겨주면 됨
-    public Page<BoardsSimpleResponseDto> getAllBoards(Pageable pageable) {
-        return boardsService.getAllBoards(pageable);
+    //쿼리스트링으로 /api/boards?name=john&keyword=Spring&page=0&size=5 이런 식으로 파라미터 넘겨주면 됨
+    public Page<BoardsSimpleResponseDto> getAllBoards(@RequestParam(value = "name", required = false) String name,
+                                                      @RequestParam(value = "keyword", required = false) String keyword,
+                                                      Pageable pageable) {
+        return boardsService.getAllBoards(name, keyword, pageable);
     }
 
     //게시글 작성

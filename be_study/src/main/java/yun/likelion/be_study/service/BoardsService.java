@@ -1,7 +1,12 @@
 package yun.likelion.be_study.service;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryFactory;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,27 +16,78 @@ import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
 import yun.likelion.be_study.entity.Boards;
 import yun.likelion.be_study.entity.Comments;
+import yun.likelion.be_study.entity.QBoards;
 import yun.likelion.be_study.repository.BoardsRepository;
 import yun.likelion.be_study.repository.CommentsRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BoardsService {
     private final BoardsRepository boardsRepository;
     private final CommentsRepository commentsRepository;
+    private final JPAQueryFactory queryFactory;
 
-    public BoardsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository) {
+    public BoardsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository,
+                         JPAQueryFactory queryFactory) {
         this.boardsRepository = boardsRepository;
         this.commentsRepository = commentsRepository;
+        this.queryFactory = queryFactory;
     }
 
     //게시글 목록
     @Transactional(readOnly = true)
     //Pageable을 활용한 페이지네이션
+    /*
     public Page<BoardsSimpleResponseDto> getAllBoards(Pageable pageable) {
         return boardsRepository.findAll(pageable)
                 .map(BoardsSimpleResponseDto::from);
+    }
+    */
+    public Page<BoardsSimpleResponseDto> getAllBoards(String name, String keyword, Pageable pageable) {
+        QBoards b =  QBoards.boards;
+
+        //동적 검색 조건 빌더
+        BooleanBuilder builder = new BooleanBuilder();
+        if (name != null && !name.isBlank()) {
+            builder.and(b.name.eq(name));
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            builder.and(
+                    b.title.contains(keyword)
+                            .or(b.content.contains(keyword))
+            );
+        }
+
+        //정렬 조건 매핑
+        OrderSpecifier<?>[] orders = pageable.getSort().stream()
+                .map(order -> order.isAscending()
+                        ? b.createdDate.asc() : b.createdDate.desc())
+                .toArray(OrderSpecifier[]::new);
+
+        //페이징된 리스트 조회
+        List<Boards> content = queryFactory
+                .selectFrom(b)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(orders)
+                .fetch();
+
+        //전체 건수 조회
+        long total = queryFactory
+                .select(b.count())
+                .from(b)
+                .where(builder)
+                .fetchOne();
+
+        //DTO 변환 및 PageImpl 반환
+        List<BoardsSimpleResponseDto> dtoList = content.stream()
+                .map(BoardsSimpleResponseDto::from)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, total);
     }
 
     //게시글 작성
@@ -50,6 +106,7 @@ public class BoardsService {
     @Transactional(readOnly = true)
     public BoardsDetailResponseDto getBoard(Long boardId) {
         //수정 및 조회 로직에서는 board 객체(엔티티)가 바로 필요하므로 .orElseThrow()
+        /*
         Boards board = boardsRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
 
@@ -57,6 +114,14 @@ public class BoardsService {
         List<Comments> comments = commentsRepository.findAllByBoard_BoardId(boardId);
 
         return BoardsDetailResponseDto.from(dto, comments);
+        */
+
+        //기존 2번의 조회(쿼리)를 1번으로 통합
+        Boards board = boardsRepository.findByIdWithComments(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+
+        //board.getComments() 호출 시 추가 쿼리 발생 X
+        return BoardsDetailResponseDto.from(BoardsSimpleResponseDto.from(board), board.getComments());
     }
 
     //게시글 수정

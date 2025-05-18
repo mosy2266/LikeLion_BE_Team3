@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "comments")
+@BatchSize(size = 30) // Comments 엔티티를 프록시로 로딩할 때 최대 30개까지 한번에 조회(댓글 엔티티 여러 건을 개별 식별자로 로딩할 때)
 public class Comments {
 
     @Id

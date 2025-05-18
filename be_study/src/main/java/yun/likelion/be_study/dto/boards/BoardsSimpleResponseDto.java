@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import yun.likelion.be_study.entity.Boards;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,8 @@ public class BoardsSimpleResponseDto {
     private String name;
     private String title;
     private String content;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
     private long likeCount;
     private long viewCount;
 
@@ -25,6 +29,8 @@ public class BoardsSimpleResponseDto {
                 .name(board.getName())
                 .title(board.getTitle())
                 .content(board.getContent())
+                .createdDate(board.getCreatedDate())
+                .lastModifiedDate(board.getLastModifiedDate())
                 .likeCount(board.getLikeCount())
                 .viewCount(board.getViewCount())
                 .build();
