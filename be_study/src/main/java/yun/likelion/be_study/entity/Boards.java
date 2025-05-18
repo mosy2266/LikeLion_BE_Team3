@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 @Setter
 //@NamedEntityGraph로 그래프를 정의해두고 @EntityGraph로 참조해서 사용
 @NamedEntityGraph(name = "Boards.withComments", attributeNodes = @NamedAttributeNode(("comments")))
+@SQLDelete(sql = "UPDATE boards SET deleted = true WHERE board_id = ?") //논리적 삭제 구현
+@Where(clause = "deleted = false")
 public class Boards extends BaseTimeEntity {
 
     @Id
@@ -35,6 +39,10 @@ public class Boards extends BaseTimeEntity {
 
     @Column(name = "view_count")
     private long viewCount = 0;
+
+    //논리적 삭제를 위한 필드
+    @Column(nullable = false)
+    private boolean deleted = false;
 
     //양방향 매핑 추가
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

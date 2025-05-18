@@ -31,6 +31,8 @@ public class QBoards extends EntityPathBase<Boards> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
+    public final BooleanPath deleted = createBoolean("deleted");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 

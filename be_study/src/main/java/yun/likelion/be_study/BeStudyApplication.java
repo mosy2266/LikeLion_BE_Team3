@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling //스케줄링 기능 활성화를 위한 애너테이션
-@EnableJpaAuditing //JpaAuditing 기능 활성화
+@EnableJpaAuditing //Jpa Auditing 기능 활성화
 public class BeStudyApplication {
 
     public static void main(String[] args) {

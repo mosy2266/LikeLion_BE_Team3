@@ -1,7 +1,6 @@
 package yun.likelion.be_study.service;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryFactory;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,8 +14,8 @@ import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
 import yun.likelion.be_study.entity.Boards;
-import yun.likelion.be_study.entity.Comments;
 import yun.likelion.be_study.entity.QBoards;
+import yun.likelion.be_study.exception.DeletedBoardException;
 import yun.likelion.be_study.repository.BoardsRepository;
 import yun.likelion.be_study.repository.CommentsRepository;
 
@@ -36,8 +35,7 @@ public class BoardsService {
         this.queryFactory = queryFactory;
     }
 
-    //게시글 목록
-    @Transactional(readOnly = true)
+
     //Pageable을 활용한 페이지네이션
     /*
     public Page<BoardsSimpleResponseDto> getAllBoards(Pageable pageable) {
@@ -45,10 +43,14 @@ public class BoardsService {
                 .map(BoardsSimpleResponseDto::from);
     }
     */
+
+    //게시글 목록
+    @Transactional(readOnly = true)
+    //QueryDSL 적용 -> 동적 쿼리를 통해 게시판 검색 기능 구현
     public Page<BoardsSimpleResponseDto> getAllBoards(String name, String keyword, Pageable pageable) {
         QBoards b =  QBoards.boards;
 
-        //동적 검색 조건 빌더
+        //동적 검색 조건 빌더 : 이름과 키워드
         BooleanBuilder builder = new BooleanBuilder();
         if (name != null && !name.isBlank()) {
             builder.and(b.name.eq(name));
@@ -118,7 +120,7 @@ public class BoardsService {
 
         //기존 2번의 조회(쿼리)를 1번으로 통합
         Boards board = boardsRepository.findByIdWithComments(boardId)
-                .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+                .orElseThrow(() -> new DeletedBoardException("삭제된 글입니다."));
 
         //board.getComments() 호출 시 추가 쿼리 발생 X
         return BoardsDetailResponseDto.from(BoardsSimpleResponseDto.from(board), board.getComments());

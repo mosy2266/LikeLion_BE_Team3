@@ -49,13 +49,15 @@ public class BoardsController {
     @Operation(summary = "게시글 열람")
     public ResponseEntity<BoardsDetailResponseDto> getBoard(@PathVariable(name = "boardId") Long boardId,
                                                             HttpServletRequest request) {
+
+        //조회 시 DeletedBoardException 발생 -> 410 Gone + "삭제된 글입니다." 반환
+        BoardsDetailResponseDto dto = boardsService.getBoard(boardId);
+
         //클라이언트 ip 추출
         String clientIp = request.getRemoteAddr();
 
         //중복 조회 여부 체크 후 Redis에 기록
         boolean incremented = viewCountService.recordView(boardId, clientIp);
-
-        BoardsDetailResponseDto dto = boardsService.getBoard(boardId);
 
         //Redis에 쌓인 조회수 + 1을 즉시 화면에 반영
         if (incremented) {
