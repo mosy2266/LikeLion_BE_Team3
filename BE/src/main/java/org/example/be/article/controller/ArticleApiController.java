@@ -104,9 +104,8 @@ public class ArticleApiController {
     return ResponseEntity.status(HttpStatus.OK).body("delete completed");
   }
 
-  // 좋아요 생성/삭제
-  // LikeApiController는 생성하지 않았음
-  // ArticleApi에서 처리하는 방식으로
+  // 좋아요 생성/삭제/조회 기능은 ArticleApiController에서 구현
+  // 아직 좋아요 중복조회는 처리하지 않았음
 
   // 게시글 좋아요 누르기
   @GetMapping("/like/{article_id}")

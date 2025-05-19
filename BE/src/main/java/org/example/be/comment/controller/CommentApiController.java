@@ -2,6 +2,7 @@ package org.example.be.comment.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.be.article.domain.Article;
 import org.example.be.comment.domain.Comment;
 import org.example.be.comment.dto.CommentMapper;
 import org.example.be.comment.service.CommentService;
@@ -84,6 +85,38 @@ public class CommentApiController {
     }
     commentService.deleteById(commentId);
     return ResponseEntity.status(HttpStatus.OK).body("delete completed");
+  }
+
+  // 댓글 좋아요 생성/삭제/조회은 CommentApiController에서 구현
+  // 아직 좋아요 중복조회 처리는 하지 않았음
+
+  // 댓글 좋아요 누르기
+  @GetMapping("/like/{comment_id}")
+  public ResponseEntity<?> likeComment(@PathVariable Long comment_id){
+    Comment target= commentService.findById(comment_id);
+    if (target == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("comment not found");
+    }
+
+    target.setLikeCount(target.getLikeCount()+1);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(target);
+  }
+
+
+  // 댓글 좋아요 취소
+  @GetMapping("/like/{comment_id}")
+  public ResponseEntity<?> unlikeComment(@PathVariable Long comment_id){
+    Comment target= commentService.findById(comment_id);
+    if (target == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("comment not found");
+    }
+
+    target.setLikeCount(target.getLikeCount()-1);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(target);
   }
 
   // 댓글 좋아요 수 조회
