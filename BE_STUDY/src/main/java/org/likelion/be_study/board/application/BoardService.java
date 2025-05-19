@@ -1,9 +1,11 @@
 package org.likelion.be_study.board.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.likelion.be_study.board.domain.Board;
 import org.likelion.be_study.board.domain.Category;
 import org.likelion.be_study.board.persistence.BoardRepository;
+import org.likelion.be_study.board.presentation.dto.BoardResponse;
 import org.likelion.be_study.board.presentation.dto.CreateBoardRequest;
 import org.likelion.be_study.board.presentation.dto.UpdateBoardRequest;
 import org.springframework.data.domain.Page;
@@ -31,9 +33,11 @@ public class BoardService {
         board.update(boardRequest);
     }
 
-    public Page<Board> getBoardsByCategory(Category category, int page, int size) {
+    public List<BoardResponse> getBoardsByCategory(Category category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return boardRepository.findByCategory(category, pageable);
+        Page<Board> boards = boardRepository.findByCategory(category, pageable);
+
+        return BoardResponse.from(boards);
     }
 
     @Transactional

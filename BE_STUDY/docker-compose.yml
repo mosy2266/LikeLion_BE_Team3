@@ -19,7 +19,7 @@ services:
     volumes:
       - be-study-database:/var/lib/mysql
     env_file:
-      - .env  # .env 파일을 이용해 환경변수들을 로드합니다.
+      - .env
 
 volumes:
   be-study-database:

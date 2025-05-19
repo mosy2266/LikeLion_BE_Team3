@@ -1,12 +1,12 @@
 package org.likelion.be_study.board.presentation;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.likelion.be_study.board.application.BoardService;
-import org.likelion.be_study.board.domain.Board;
 import org.likelion.be_study.board.domain.Category;
+import org.likelion.be_study.board.presentation.dto.BoardResponse;
 import org.likelion.be_study.board.presentation.dto.CreateBoardRequest;
 import org.likelion.be_study.board.presentation.dto.UpdateBoardRequest;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,13 +37,13 @@ public class BoardController {
     }
 
     @GetMapping("/category")
-    public ResponseEntity<Page<Board>> getBoardsByCategory(
+    public ResponseEntity<List<BoardResponse>> getBoardsByCategory(
         @RequestParam Category category,
         @RequestParam int page,
         @RequestParam int size
     ) {
-        Page<Board> boards = boardService.getBoardsByCategory(category, page, size);
-        return ResponseEntity.ok(boards);
+        List<BoardResponse> response = boardService.getBoardsByCategory(category, page, size);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{boardId}")
