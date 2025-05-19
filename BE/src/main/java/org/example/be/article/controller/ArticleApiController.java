@@ -8,6 +8,7 @@ import org.example.be.article.dto.ArticleRequest;
 import org.example.be.article.service.ArticleService;
 import org.example.be.comment.domain.Comment;
 import org.example.be.comment.service.CommentService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,6 +61,18 @@ public class ArticleApiController {
         .body(result);
   }
 
+  // paging
+  @GetMapping("/list/{page}/{size}")
+  public ResponseEntity<?> getArticlePage(
+      @PathVariable int page,
+      @PathVariable int size
+  ){
+    Page<Article> result = articleService.getArticlePages(page, size);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(result);
+  }
+
   // 게시글 업데이트
   @PatchMapping("/{article_id}")
   public ResponseEntity<?> updateArticle(
@@ -91,7 +104,11 @@ public class ArticleApiController {
     return ResponseEntity.status(HttpStatus.OK).body("delete completed");
   }
 
-  // 게시글 좋아요
+  // 좋아요 생성/삭제
+  // LikeApiController는 생성하지 않았음
+  // ArticleApi에서 처리하는 방식으로
+
+  // 게시글 좋아요 누르기
   @GetMapping("/like/{article_id}")
   public ResponseEntity<?> likeArticle(@PathVariable Long article_id){
     Article target = articleService.findById(article_id);
@@ -100,6 +117,20 @@ public class ArticleApiController {
     }
 
     target.setLikeCount(target.getLikeCount()+1);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(target);
+  }
+
+  // 게시글 좋아요 삭제
+  @GetMapping("/unlike/{article_id}")
+  public ResponseEntity<?> unlikeArticle(@PathVariable Long article_id){
+    Article target = articleService.findById(article_id);
+    if (target == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
+    }
+
+    target.setLikeCount(target.getLikeCount()-1);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(target);

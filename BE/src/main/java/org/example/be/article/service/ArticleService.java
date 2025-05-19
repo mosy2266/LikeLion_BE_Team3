@@ -4,6 +4,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.be.article.domain.Article;
 import org.example.be.article.repository.ArticleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +22,11 @@ public class ArticleService {
 
   public List<Article> findAll(){
     return articleRepository.findAll();
+  }
+
+  public Page<Article> getArticlePages(int page, int size){
+    Pageable pageable = PageRequest.of(page, size);
+    return articleRepository.findAll(pageable);
   }
 
   public Article save(Article article) {
