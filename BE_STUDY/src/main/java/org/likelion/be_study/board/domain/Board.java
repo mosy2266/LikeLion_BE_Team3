@@ -36,7 +36,7 @@ public class Board extends BaseTimeEntity {
     private Category category;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comment;
+    private List<Comment> comments;
 
     @Builder
     public Board(
