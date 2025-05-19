@@ -6,6 +6,8 @@ import org.example.be.article.domain.Article;
 import org.example.be.article.dto.ArticleMapper;
 import org.example.be.article.dto.ArticleRequest;
 import org.example.be.article.service.ArticleService;
+import org.example.be.comment.domain.Comment;
+import org.example.be.comment.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,9 @@ public class ArticleApiController {
 
   private final ArticleService articleService;
   private final ArticleMapper articleMapper;
+
+  private final CommentService commentService;
+
 
   // 게시글 생성
   @PostMapping("/post")
@@ -112,8 +117,27 @@ public class ArticleApiController {
     return ResponseEntity.status(HttpStatus.OK).body(article.getLikeCount());
   }
 
+  // 게시글에 댓글 추가
+  // 양방향 연관관계 고려해서 article에도 생성한 comment 즉시 반영
+  @PostMapping("/{article_id}/comment")
+  public ResponseEntity<?> createCommentForArticle(
+      @PathVariable Long article_id,
+      @RequestBody Comment request
+  ){
+    Article article = articleService.findById(article_id);
+    if (article == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
+    }
+
+    request.setArticle(article);
+    Comment saved = commentService.save(request);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(saved);
+  }
+
   // 게시글에 달린 댓글 목록 조회
-  @GetMapping("/{article_id}/comments")
+  @GetMapping("/{article_id}/comment")
   public ResponseEntity<?> getCommentsOfArticle(
       @PathVariable(name = "article_id") Long articleId
   ) {
