@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.be.article.domain.Article;
 import org.example.be.article.dto.ArticleMapper;
 import org.example.be.article.dto.ArticleRequest;
+import org.example.be.article.dto.ArticleResponse;
 import org.example.be.article.service.ArticleService;
 import org.example.be.comment.domain.Comment;
 import org.example.be.comment.service.CommentService;
@@ -26,49 +27,41 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleApiController {
 
   private final ArticleService articleService;
-  private final ArticleMapper articleMapper;
-
-  private final CommentService commentService;
-
 
   // 게시글 생성
   @PostMapping("/post")
   public ResponseEntity<?> createArticle(
-      @RequestBody Article request
+      @RequestBody ArticleRequest request
   ) {
-    Article saved = articleService.save(request);
+    ArticleResponse saved = articleService.save(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 
   // 단일 게시글 조회
   @GetMapping("/{article_id}")
   public ResponseEntity<?> getArticle(
-      @PathVariable(name = "article_id") Long articleId
+      @PathVariable(name = "article_id") Long article_id
   ) {
-    Article article = articleService.findById(articleId);
-    if (article == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-    return ResponseEntity.status(HttpStatus.OK).body(article);
+    ArticleResponse response = articleService.findById(article_id);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   // 게시글 목록 조회
   @GetMapping("/list")
   public ResponseEntity<?> getArticleList(){
-    List<Article> result = articleService.findAll();
-
+    List<ArticleResponse> result = articleService.findAll();
     return ResponseEntity.status(HttpStatus.OK)
         .body(result);
   }
 
   // paging
+  // page, size는 query param로 받아오는 게 좋을 듯
   @GetMapping("/list/{page}/{size}")
   public ResponseEntity<?> getArticlePage(
       @PathVariable int page,
       @PathVariable int size
   ){
-    Page<Article> result = articleService.getArticlePages(page, size);
-
+    Page<ArticleResponse> result = articleService.getArticlePages(page, size);
     return ResponseEntity.status(HttpStatus.OK)
         .body(result);
   }
@@ -77,19 +70,11 @@ public class ArticleApiController {
   @PatchMapping("/{article_id}")
   public ResponseEntity<?> updateArticle(
       @PathVariable(name = "article_id") Long articleId,
-      @RequestBody Article request
+      @RequestBody ArticleRequest request
   ) {
-    Article target = articleService.findById(articleId);
-    if (target == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-
-    if (request.getTitle() != null) target.setTitle(request.getTitle());
-    if (request.getContent() != null) target.setContent(request.getContent());
-    if (request.getAuthor() != null) target.setAuthor(request.getAuthor());
-
-    Article updated = articleService.save(target);
-    return ResponseEntity.status(HttpStatus.OK).body(updated);
+    ArticleResponse response = articleService.update(articleId, request);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(response);
   }
 
   // 게시글 삭제
@@ -102,80 +87,6 @@ public class ArticleApiController {
     }
     articleService.deleteById(articleId);
     return ResponseEntity.status(HttpStatus.OK).body("delete completed");
-  }
-
-  // 좋아요 생성/삭제/조회 기능은 ArticleApiController에서 구현
-  // 아직 좋아요 중복조회는 처리하지 않았음
-
-  // 게시글 좋아요 누르기
-  @GetMapping("/like/{article_id}")
-  public ResponseEntity<?> likeArticle(@PathVariable Long article_id){
-    Article target = articleService.findById(article_id);
-    if (target == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-
-    target.setLikeCount(target.getLikeCount()+1);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(target);
-  }
-
-  // 게시글 좋아요 삭제
-  @GetMapping("/unlike/{article_id}")
-  public ResponseEntity<?> unlikeArticle(@PathVariable Long article_id){
-    Article target = articleService.findById(article_id);
-    if (target == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-
-    target.setLikeCount(target.getLikeCount()-1);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(target);
-  }
-
-  // 게시글 좋아요 수 조회
-  @GetMapping("/{article_id}/likes")
-  public ResponseEntity<?> getArticleLikeCount(
-      @PathVariable(name = "article_id") Long articleId
-  ) {
-    Article article = articleService.findById(articleId);
-    if (article == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-    return ResponseEntity.status(HttpStatus.OK).body(article.getLikeCount());
-  }
-
-  // 게시글에 댓글 추가
-  // 양방향 연관관계 고려해서 article에도 생성한 comment 즉시 반영
-  @PostMapping("/{article_id}/comment")
-  public ResponseEntity<?> createCommentForArticle(
-      @PathVariable Long article_id,
-      @RequestBody Comment request
-  ){
-    Article article = articleService.findById(article_id);
-    if (article == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-
-    request.setArticle(article);
-    Comment saved = commentService.save(request);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(saved);
-  }
-
-  // 게시글에 달린 댓글 목록 조회
-  @GetMapping("/{article_id}/comment")
-  public ResponseEntity<?> getCommentsOfArticle(
-      @PathVariable(name = "article_id") Long articleId
-  ) {
-    Article article = articleService.findById(articleId);
-    if (article == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
-    return ResponseEntity.status(HttpStatus.OK).body(article.getCommentList());
   }
 
 }

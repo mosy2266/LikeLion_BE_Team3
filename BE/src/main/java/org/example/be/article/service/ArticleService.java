@@ -3,6 +3,9 @@ package org.example.be.article.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.be.article.domain.Article;
+import org.example.be.article.dto.ArticleMapper;
+import org.example.be.article.dto.ArticleRequest;
+import org.example.be.article.dto.ArticleResponse;
 import org.example.be.article.repository.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,23 +17,40 @@ import org.springframework.stereotype.Service;
 public class ArticleService {
 
   private final ArticleRepository articleRepository;
+  private final ArticleMapper articleMapper;
 
 
-  public Article findById(Long articleId) {
-    return articleRepository.findById(articleId).orElse(null);
+  public ArticleResponse findById(Long articleId) {
+    return articleMapper.toResponse(articleRepository.findById(articleId).orElseThrow());
   }
 
-  public List<Article> findAll(){
-    return articleRepository.findAll();
+  public List<ArticleResponse> findAll(){
+    return articleRepository.findAll().stream()
+        .map((each)-> articleMapper.toResponse(each))
+        .toList();
   }
 
-  public Page<Article> getArticlePages(int page, int size){
+  public Page<ArticleResponse> getArticlePages(int page, int size){
     Pageable pageable = PageRequest.of(page, size);
-    return articleRepository.findAll(pageable);
+    return articleRepository.findAll(pageable)
+        .map(each->articleMapper.toResponse(each));
   }
 
-  public Article save(Article article) {
-    return articleRepository.save(article);
+  public ArticleResponse save(ArticleRequest request) {
+    Article article = articleMapper.toEntity(request);
+    return articleMapper.toResponse(articleRepository.save(article));
+  }
+
+  public ArticleResponse update(Long articleId, ArticleRequest request){
+    Article article = articleRepository.findById(articleId).orElseThrow(
+        ()-> new RuntimeException("the article is not found")
+    );
+
+    if (request.getTitle() != null) article.setTitle(request.getTitle());
+    if (request.getContent() != null) article.setContent(request.getContent());
+    if (request.getAuthor() != null) article.setAuthor(request.getAuthor());
+
+    return articleMapper.toResponse(articleRepository.save(article));
   }
 
   public void deleteById(Long articleId) {
