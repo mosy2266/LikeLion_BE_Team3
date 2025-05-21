@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import yun.likelion.be_study.entity.Comments;
+import yun.likelion.be_study.entity.Members;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class CommentsResponseDto {
     public static CommentsResponseDto from(Comments comments) {
         return CommentsResponseDto.builder()
                 .commentId(comments.getCommentId())
-                .nickname(comments.getNickname())
+                .nickname(comments.getMember().getNickname())
                 .content(comments.getContent())
                 .likeCount(comments.getLikeCount())
                 .build();

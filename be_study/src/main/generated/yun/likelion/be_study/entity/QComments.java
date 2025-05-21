@@ -30,9 +30,9 @@ public class QComments extends EntityPathBase<Comments> {
 
     public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
 
-    public final StringPath nickname = createString("nickname");
+    public final QMembers member;
 
-    public final StringPath password = createString("password");
+    public final StringPath nickname = createString("nickname");
 
     public QComments(String variable) {
         this(Comments.class, forVariable(variable), INITS);
@@ -52,7 +52,8 @@ public class QComments extends EntityPathBase<Comments> {
 
     public QComments(Class<? extends Comments> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.board = inits.isInitialized("board") ? new QBoards(forProperty("board")) : null;
+        this.board = inits.isInitialized("board") ? new QBoards(forProperty("board"), inits.get("board")) : null;
+        this.member = inits.isInitialized("member") ? new QMembers(forProperty("member")) : null;
     }
 
 }

@@ -8,30 +8,38 @@ import yun.likelion.be_study.dto.comments.CommentsResponseDto;
 import yun.likelion.be_study.dto.comments.CommentsUpdateRequestDto;
 import yun.likelion.be_study.entity.Boards;
 import yun.likelion.be_study.entity.Comments;
+import yun.likelion.be_study.entity.Members;
 import yun.likelion.be_study.repository.BoardsRepository;
 import yun.likelion.be_study.repository.CommentsRepository;
+import yun.likelion.be_study.repository.MembersRepository;
 
 @Service
 public class CommentsService {
     private final BoardsRepository boardsRepository;
     private final CommentsRepository commentsRepository;
+    private final MembersRepository membersRepository;
 
-    public CommentsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository) {
+    public CommentsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository,
+                           MembersRepository membersRepository) {
         this.boardsRepository = boardsRepository;
         this.commentsRepository = commentsRepository;
+        this.membersRepository = membersRepository;
     }
 
     //댓글 작성
     @Transactional
-    public CommentsResponseDto createComment(Long boardId, CommentsCreateRequestDto dto) {
+    public CommentsResponseDto createComment(Long boardId, CommentsCreateRequestDto dto, Long memberId) {
         //게시글 존재 여부 확인
         Boards board = boardsRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다. 게시글 id : " + boardId));
 
+        Members member = membersRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+
         Comments comment = new Comments();
         comment.setBoard(board);
-        comment.setNickname(dto.getNickname());
-        comment.setPassword(dto.getPassword());
+        comment.setMember(member);
+        comment.setNickname(member.getNickname());
         comment.setContent(dto.getContent());
 
         commentsRepository.save(comment);
@@ -41,14 +49,15 @@ public class CommentsService {
 
     //댓글 수정
     @Transactional
-    public CommentsResponseDto updateComment(Long boardId, Long commentId, CommentsUpdateRequestDto dto) {
+    public CommentsResponseDto updateComment(Long boardId, Long commentId, CommentsUpdateRequestDto dto,
+                                             Long memberId) {
         //게시글-댓글 관계 검증
         Comments comment = commentsRepository.findByCommentIdAndBoard_BoardId(commentId, boardId)
                 .orElseThrow(() ->  new EntityNotFoundException("해당 댓글이 게시글에 존재하지 않습니다. 댓글 id : " + commentId));
 
         //비밀번호 검증
-        if (!comment.getPassword().equals(dto.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        if (!comment.getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("작성자만 수정할 수 있습니다.");
         }
 
         //댓글 내용 업데이트
@@ -59,14 +68,14 @@ public class CommentsService {
 
     //댓글 삭제
     @Transactional
-    public void deleteComment(Long boardId, Long commentId, String password) {
+    public void deleteComment(Long boardId, Long commentId, Long memberId) {
         //게시글-댓글 관계 검증
         Comments comment = commentsRepository.findByCommentIdAndBoard_BoardId(commentId, boardId)
                 .orElseThrow(() ->  new EntityNotFoundException("해당 댓글이 게시글에 존재하지 않습니다. 댓글 id : " + commentId));
 
         //비밀번호 검증
-        if (!comment.getPassword().equals(password)) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        if (!comment.getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("작성자만 삭제할 수 있습니다.");
         }
 
         commentsRepository.delete(comment);

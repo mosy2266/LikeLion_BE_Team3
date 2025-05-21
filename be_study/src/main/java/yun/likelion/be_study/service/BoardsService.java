@@ -14,23 +14,28 @@ import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
 import yun.likelion.be_study.entity.Boards;
+import yun.likelion.be_study.entity.Members;
 import yun.likelion.be_study.entity.QBoards;
 import yun.likelion.be_study.exception.DeletedBoardException;
 import yun.likelion.be_study.repository.BoardsRepository;
 import yun.likelion.be_study.repository.CommentsRepository;
+import yun.likelion.be_study.repository.MembersRepository;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class BoardsService {
     private final BoardsRepository boardsRepository;
+    private final MembersRepository membersRepository;
     private final CommentsRepository commentsRepository;
     private final JPAQueryFactory queryFactory;
 
-    public BoardsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository,
-                         JPAQueryFactory queryFactory) {
+    public BoardsService(BoardsRepository boardsRepository, MembersRepository membersRepository,
+                         CommentsRepository commentsRepository, JPAQueryFactory queryFactory) {
         this.boardsRepository = boardsRepository;
+        this.membersRepository = membersRepository;
         this.commentsRepository = commentsRepository;
         this.queryFactory = queryFactory;
     }
@@ -47,13 +52,13 @@ public class BoardsService {
     //게시글 목록
     @Transactional(readOnly = true)
     //QueryDSL 적용 -> 동적 쿼리를 통해 게시판 검색 기능 구현
-    public Page<BoardsSimpleResponseDto> getAllBoards(String name, String keyword, Pageable pageable) {
+    public Page<BoardsSimpleResponseDto> getAllBoards(String nickname, String keyword, Pageable pageable) {
         QBoards b =  QBoards.boards;
 
         //동적 검색 조건 빌더 : 이름과 키워드
         BooleanBuilder builder = new BooleanBuilder();
-        if (name != null && !name.isBlank()) {
-            builder.and(b.name.eq(name));
+        if (nickname != null && !nickname.isBlank()) {
+            builder.and(b.member.nickname.eq(nickname));
         }
         if (keyword != null && !keyword.isBlank()) {
             builder.and(
@@ -93,12 +98,18 @@ public class BoardsService {
     }
 
     //게시글 작성
-    public BoardsSimpleResponseDto createBoard(BoardsCreateRequestDto boardsCreateRequestDto) {
-        Boards board = new Boards();
+    @Transactional
+    public BoardsSimpleResponseDto createBoard(BoardsCreateRequestDto boardsCreateRequestDto, Long memberId) {
 
-        board.setName(boardsCreateRequestDto.getName());
+        Members member = membersRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("등록된 회원이 아닙니다."));
+
+        Boards board = new Boards();
+        board.setNickname(member.getNickname());
         board.setTitle(boardsCreateRequestDto.getTitle());
         board.setContent(boardsCreateRequestDto.getContent());
+        board.setMember(member);
+
         boardsRepository.save(board);
 
         return BoardsSimpleResponseDto.from(board);
@@ -128,11 +139,15 @@ public class BoardsService {
 
     //게시글 수정
     @Transactional
-    public BoardsSimpleResponseDto updateBoard(Long boardId, BoardsUpdateRequestDto boardsUpdateRequestDto) {
+    public BoardsSimpleResponseDto updateBoard(Long boardId, BoardsUpdateRequestDto boardsUpdateRequestDto,
+                                               Long memberId) {
         //수정 및 조회 로직에서는 board 객체(엔티티)가 바로 필요하므로 findById().orElseThrow()
         Boards board = boardsRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
 
+        if (!board.getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("작성자만 수정할 수 있습니다.");
+        }
         board.setTitle(boardsUpdateRequestDto.getTitle());
         board.setContent(boardsUpdateRequestDto.getContent());
 
@@ -141,10 +156,12 @@ public class BoardsService {
 
     //게시글 삭제
     @Transactional
-    public void deleteBoard(Long boardId) {
-        //삭제 로직에서는 존재 여부만 체크하면 되므로 existsById()
-        if (!boardsRepository.existsById(boardId)) {
-            throw new EntityNotFoundException("there is no board with id " + boardId);
+    public void deleteBoard(Long boardId,  Long memberId) {
+        Boards board = boardsRepository.findById(boardId)
+                        .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+
+        if (!board.getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("작성자만 삭제할 수 있습니다.");
         }
         boardsRepository.deleteById(boardId);
     }

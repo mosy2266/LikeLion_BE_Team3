@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 public class BoardsDetailResponseDto {
     private Long boardId;
-    private String name;
+    private String nickname;
     private String title;
     private String content;
     private LocalDateTime createdDate;
@@ -29,8 +29,8 @@ public class BoardsDetailResponseDto {
     //Boards 엔티티를 DTO로 변환해주는 정적 메서드
     public static BoardsDetailResponseDto from(BoardsSimpleResponseDto dto, List<Comments> comments) {
         return BoardsDetailResponseDto.builder()
-                .boardId(dto.getBoardsId())
-                .name(dto.getName())
+                .boardId(dto.getBoardId())
+                .nickname(dto.getNickname())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .createdDate(dto.getCreatedDate())

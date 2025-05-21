@@ -11,6 +11,8 @@ import yun.likelion.be_study.dto.boards.BoardsCreateRequestDto;
 import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
+import yun.likelion.be_study.entity.Members;
+import yun.likelion.be_study.filter.SessionConst;
 import yun.likelion.be_study.service.BoardsService;
 import yun.likelion.be_study.service.ViewCountService;
 
@@ -39,8 +41,10 @@ public class BoardsController {
     //게시글 작성
     @PostMapping
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<BoardsSimpleResponseDto> createBoard(@RequestBody BoardsCreateRequestDto dto) {
-        BoardsSimpleResponseDto boardsSimpleResponseDto = boardsService.createBoard(dto);
+    public ResponseEntity<BoardsSimpleResponseDto> createBoard(@RequestBody BoardsCreateRequestDto dto,
+                                                               HttpServletRequest request) {
+        Long memberId = (Long) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        BoardsSimpleResponseDto boardsSimpleResponseDto = boardsService.createBoard(dto,memberId);
         return ResponseEntity.ok(boardsSimpleResponseDto);
     }
 
@@ -72,16 +76,21 @@ public class BoardsController {
     @PutMapping("/{boardId}")
     @Operation(summary = "게시글 수정")
     public ResponseEntity<BoardsSimpleResponseDto> updateBoard(@PathVariable(name = "boardId") Long boardId,
-                                                               @RequestBody BoardsUpdateRequestDto dto) {
-        BoardsSimpleResponseDto boardsSimpleResponseDto = boardsService.updateBoard(boardId, dto);
+                                                               @RequestBody BoardsUpdateRequestDto dto,
+                                                               HttpServletRequest request) {
+        Long memberId = (Long) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        BoardsSimpleResponseDto boardsSimpleResponseDto = boardsService.updateBoard(boardId, dto, memberId);
         return ResponseEntity.ok(boardsSimpleResponseDto);
     }
 
     //게시글 삭제
     @DeleteMapping("/{boardId}")
     @Operation(summary = "게시글 삭제")
-    public ResponseEntity<String> deleteBoard(@PathVariable(name = "boardId") Long boardId) {
-        boardsService.deleteBoard(boardId);
+    public ResponseEntity<String> deleteBoard(@PathVariable(name = "boardId") Long boardId,
+                                              HttpServletRequest request) {
+
+        Long memberId = (Long) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        boardsService.deleteBoard(boardId, memberId);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 

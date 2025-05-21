@@ -4,14 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import yun.likelion.be_study.entity.Members;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentsUpdateRequestDto {
 
-    @NotBlank
-    private String password;
+    private Members member;
 
     @NotBlank
     private String content;
