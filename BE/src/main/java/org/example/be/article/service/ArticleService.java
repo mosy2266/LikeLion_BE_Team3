@@ -21,39 +21,61 @@ public class ArticleService {
 
 
   public ArticleResponse findById(Long articleId) {
-    return articleMapper.toResponse(articleRepository.findById(articleId).orElseThrow());
+    return articleMapper.toResponse(articleRepository.findById(articleId)
+        .orElseThrow(() -> new RuntimeException("the article is not found")));
   }
 
-  public List<ArticleResponse> findAll(){
-    return articleRepository.findAll().stream()
-        .map((each)-> articleMapper.toResponse(each))
-        .toList();
-  }
-
-  public Page<ArticleResponse> getArticlePages(int page, int size){
+  public Page<ArticleResponse> getArticlePages(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
     return articleRepository.findAll(pageable)
-        .map(each->articleMapper.toResponse(each));
+        .map(articleMapper::toResponse);
   }
 
-  public ArticleResponse save(ArticleRequest request) {
+  public ArticleResponse create(ArticleRequest request) {
     Article article = articleMapper.toEntity(request);
     return articleMapper.toResponse(articleRepository.save(article));
   }
 
-  public ArticleResponse update(Long articleId, ArticleRequest request){
+  public ArticleResponse update(Long articleId, ArticleRequest request) {
     Article article = articleRepository.findById(articleId).orElseThrow(
-        ()-> new RuntimeException("the article is not found")
+        () -> new RuntimeException("the article is not found")
     );
 
-    if (request.getTitle() != null) article.setTitle(request.getTitle());
-    if (request.getContent() != null) article.setContent(request.getContent());
-    if (request.getAuthor() != null) article.setAuthor(request.getAuthor());
+    if (request.getTitle() != null) {
+      article.setTitle(request.getTitle());
+    }
+    if (request.getContent() != null) {
+      article.setContent(request.getContent());
+    }
+    if (request.getAuthor() != null) {
+      article.setAuthor(request.getAuthor());
+    }
 
     return articleMapper.toResponse(articleRepository.save(article));
   }
 
   public void deleteById(Long articleId) {
     articleRepository.deleteById(articleId);
+  }
+
+
+  // 좋아요 누르기
+  public ArticleResponse likeArticle(Long articleId){
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(()-> new RuntimeException("the article is not found"));
+
+    article.setLikeCount(article.getLikeCount()+1);
+    return articleMapper.toResponse(articleRepository.save(article));
+  }
+
+
+  // 좋아요 취소
+  public ArticleResponse unlikeArticle(Long articleId){
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(()-> new RuntimeException("the article is not found"));
+
+    if(article.getLikeCount()>0)
+      article.setLikeCount(article.getLikeCount()-1);
+    return articleMapper.toResponse(articleRepository.save(article));
   }
 }

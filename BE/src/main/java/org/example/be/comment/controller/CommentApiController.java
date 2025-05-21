@@ -28,8 +28,10 @@ public class CommentApiController {
   // 모든 댓글 목록 조회
   @GetMapping("/all")
   public ResponseEntity<?> getAllComments() {
+    List<CommentResponse> responses = commentService.findAll();
+
     return ResponseEntity.status(HttpStatus.OK)
-        .body(commentService.findAll());
+        .body(responses);
   }
 
   // 특정 댓글 조회
@@ -37,8 +39,10 @@ public class CommentApiController {
   public ResponseEntity<?> getComment(
       @PathVariable(name = "comment_id") Long commentId
   ) {
+    CommentResponse response = commentService.findById(commentId);
+
     return ResponseEntity.status(HttpStatus.OK)
-        .body(commentService.findById(commentId));
+        .body(response);
   }
 
   // 댓글 생성
@@ -47,8 +51,10 @@ public class CommentApiController {
       @PathVariable(name="article_id") Long articleId,
       @RequestBody CommentRequest request
   ) {
+    CommentResponse response = commentService.create(articleId, request);
+
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(commentService.create(articleId, request));
+        .body(response);
   }
 
   // 댓글 수정
@@ -57,8 +63,10 @@ public class CommentApiController {
       @PathVariable(name = "comment_id") Long commentId,
       @RequestBody CommentRequest request
   ) {
+    CommentResponse response = commentService.update(commentId, request);
+
     return ResponseEntity.status(HttpStatus.OK)
-        .body(commentService.update(commentId, request));
+        .body(response);
   }
 
   // 댓글 삭제
@@ -70,5 +78,24 @@ public class CommentApiController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body("delete completed");
+  }
+
+  // 댓글 좋아요 기능
+  @GetMapping("/{comment_id}/like")
+  public ResponseEntity<?> likeComment(@PathVariable(name="comment_id") Long commentId){
+    CommentResponse response = commentService.likeComment(commentId);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(response);
+
+  }
+
+  // 댓글 좋아요 취소
+  @GetMapping("/{comment_id}/like")
+  public ResponseEntity<?> unlikeComment(@PathVariable(name="comment_id") Long commentId){
+    CommentResponse response = commentService.likeComment(commentId);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(response);
   }
 }

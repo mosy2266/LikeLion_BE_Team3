@@ -55,4 +55,25 @@ public class CommentService {
   public void deleteById(Long commentId) {
     commentRepository.deleteById(commentId);
   }
+
+
+  // 댓글 좋아요
+  public CommentResponse likeComment(Long commentId){
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(()-> new RuntimeException("the comment is not found"));
+
+    comment.setLikeCount(comment.getLikeCount()+1);
+    return commentMapper.toResponse(commentRepository.save(comment));
+  }
+
+
+  // 댓글 좋아요 취소
+  public CommentResponse unlikeComment(Long commentId){
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(()-> new RuntimeException("the comment is not found"));
+
+    if(comment.getLikeCount()>0)
+      comment.setLikeCount(comment.getLikeCount()-1);
+    return commentMapper.toResponse(commentRepository.save(comment));
+  }
 }

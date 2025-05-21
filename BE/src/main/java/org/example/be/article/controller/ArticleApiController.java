@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,53 +29,42 @@ public class ArticleApiController {
 
   private final ArticleService articleService;
 
-  // 게시글 생성
-  @PostMapping("/post")
-  public ResponseEntity<?> createArticle(
-      @RequestBody ArticleRequest request
-  ) {
-    ArticleResponse saved = articleService.save(request);
-    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-  }
-
   // 단일 게시글 조회
   @GetMapping("/{article_id}")
   public ResponseEntity<?> getArticle(
       @PathVariable(name = "article_id") Long article_id
   ) {
-    ArticleResponse response = articleService.findById(article_id);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(articleService.findById(article_id));
   }
 
   // 게시글 목록 조회
   @GetMapping("/list")
-  public ResponseEntity<?> getArticleList(){
-    List<ArticleResponse> result = articleService.findAll();
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(result);
-  }
-
-  // paging
-  // page, size는 query param로 받아오는 게 좋을 듯
-  @GetMapping("/list/{page}/{size}")
   public ResponseEntity<?> getArticlePage(
-      @PathVariable int page,
-      @PathVariable int size
+      @RequestParam(name = "page") int page,
+      @RequestParam(name = "size") int size
   ){
-    Page<ArticleResponse> result = articleService.getArticlePages(page, size);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(result);
+        .body(articleService.getArticlePages(page, size));
   }
 
-  // 게시글 업데이트
+  // 게시글 생성
+  @PostMapping("/post")
+  public ResponseEntity<?> createArticle(
+      @RequestBody ArticleRequest request
+  ) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(articleService.create(request));
+  }
+
+  // 게시글 수정
   @PatchMapping("/{article_id}")
   public ResponseEntity<?> updateArticle(
       @PathVariable(name = "article_id") Long articleId,
       @RequestBody ArticleRequest request
   ) {
-    ArticleResponse response = articleService.update(articleId, request);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(response);
+        .body(articleService.update(articleId, request));
   }
 
   // 게시글 삭제
@@ -82,11 +72,26 @@ public class ArticleApiController {
   public ResponseEntity<?> deleteArticle(
       @PathVariable(name = "article_id") Long articleId
   ) {
-    if (articleService.findById(articleId) == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("article not found");
-    }
     articleService.deleteById(articleId);
-    return ResponseEntity.status(HttpStatus.OK).body("delete completed");
+    return ResponseEntity.status(HttpStatus.OK)
+        .body("delete completed");
   }
 
+  // 게시글 좋아요
+  @GetMapping("/{article_id}/like")
+  public ResponseEntity<?> likeArticle(
+      @PathVariable(name="article_id") Long articleId
+  ){
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(articleService.likeArticle(articleId));
+  }
+
+  // 게시글 좋아요 취소
+  @GetMapping("/{article_id}/unlike")
+  public ResponseEntity<?> unlikeArticle(
+      @PathVariable(name="article_id") Long articleId
+  ){
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(articleService.unlikeArticle(articleId));
+  }
 }

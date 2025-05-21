@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.be.comment.domain.Comment;
+import org.example.be.comment.dto.CommentResponse;
 import org.example.be.like.domain.ArticleLike;
+import org.example.be.like.dto.ArticleLikeResponse;
 
 @Builder
 @Getter
@@ -15,6 +17,5 @@ public class ArticleResponse {
   private String title;
   private String content;
   private int likeCount;
-  private List<Comment> commentList;
-  private List<ArticleLike> likeList;
+  private List<CommentResponse> commentList;
 }

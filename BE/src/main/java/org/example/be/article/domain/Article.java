@@ -47,7 +47,4 @@ public class Article {
   @Column(name="like_count")
   private Integer likeCount;
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval=true)
-  private List<ArticleLike> likeList;
-
 }
