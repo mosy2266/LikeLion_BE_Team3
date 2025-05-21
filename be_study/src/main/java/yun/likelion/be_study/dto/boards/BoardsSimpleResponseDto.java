@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yun.likelion.be_study.entity.Boards;
+import yun.likelion.be_study.entity.boards.Boards;
 
 import java.time.LocalDateTime;
 

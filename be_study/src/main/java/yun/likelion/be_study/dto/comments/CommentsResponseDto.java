@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yun.likelion.be_study.entity.Comments;
-import yun.likelion.be_study.entity.Members;
+import yun.likelion.be_study.entity.comments.Comments;
 
 @Data
 @AllArgsConstructor

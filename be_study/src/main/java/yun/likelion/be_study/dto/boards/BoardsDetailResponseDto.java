@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import yun.likelion.be_study.dto.comments.CommentsResponseDto;
-import yun.likelion.be_study.entity.Comments;
+import yun.likelion.be_study.entity.comments.Comments;
 
 import java.time.LocalDateTime;
 import java.util.List;

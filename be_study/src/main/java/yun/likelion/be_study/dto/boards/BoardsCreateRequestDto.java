@@ -3,7 +3,7 @@ package yun.likelion.be_study.dto.boards;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yun.likelion.be_study.entity.Members;
+import yun.likelion.be_study.entity.members.Members;
 
 @Data
 @AllArgsConstructor
