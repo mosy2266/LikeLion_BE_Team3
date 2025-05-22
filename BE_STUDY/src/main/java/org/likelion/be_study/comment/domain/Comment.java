@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SoftDelete;
 import org.likelion.be_study.base.BaseTimeEntity;
 import org.likelion.be_study.board.domain.Board;
 
@@ -20,6 +21,7 @@ import org.likelion.be_study.board.domain.Board;
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SoftDelete(columnName = "is_deleted")
 public class Comment extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SoftDelete;
 import org.likelion.be_study.base.BaseTimeEntity;
 import org.likelion.be_study.board.presentation.dto.UpdateBoardRequest;
 import org.likelion.be_study.comment.domain.Comment;
@@ -22,6 +23,7 @@ import org.likelion.be_study.comment.domain.Comment;
 @Table(name = "board")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SoftDelete(columnName = "is_deleted")
 public class Board extends BaseTimeEntity {
 
     @Id
