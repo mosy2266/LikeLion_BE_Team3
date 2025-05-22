@@ -47,8 +47,5 @@ public class Comment {
   @Column(name="like_count")
   private Integer likeCount;
 
-  @OneToMany(mappedBy="comment", cascade= CascadeType.ALL, orphanRemoval=true)
-  private List<CommentLike> likeList;
-
 }
 

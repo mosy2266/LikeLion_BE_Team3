@@ -48,6 +48,13 @@ public class ArticleApiController {
         .body(articleService.getArticlePages(page, size));
   }
 
+  @GetMapping("/list/admin")
+  public ResponseEntity<?> getArticleListForAdmin(){
+    List<ArticleResponse> result = articleService.getArticleListForAdmin();
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(result);
+  }
+
   // 게시글 생성
   @PostMapping("/post")
   public ResponseEntity<?> createArticle(

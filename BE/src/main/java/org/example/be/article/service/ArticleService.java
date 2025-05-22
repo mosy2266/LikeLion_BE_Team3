@@ -31,6 +31,12 @@ public class ArticleService {
         .map(articleMapper::toResponse);
   }
 
+  public List<ArticleResponse> getArticleListForAdmin(){
+    return articleRepository.findAll().stream()
+        .map(articleMapper::toResponse)
+        .toList();
+  }
+
   public ArticleResponse create(ArticleRequest request) {
     Article article = articleMapper.toEntity(request);
     return articleMapper.toResponse(articleRepository.save(article));

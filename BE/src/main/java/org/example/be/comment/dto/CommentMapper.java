@@ -14,7 +14,6 @@ public class CommentMapper {
         .author(request.getAuthor())
         .content(request.getContent())
         .likeCount(0)
-        .likeList(new ArrayList<>())
         .build();
   }
 
