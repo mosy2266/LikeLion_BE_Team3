@@ -17,6 +17,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.be.comment.domain.Comment;
 import org.example.be.like.domain.ArticleLike;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name="article")
@@ -25,6 +28,10 @@ import org.example.be.like.domain.ArticleLike;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
+//soft delete
+@SQLDelete(sql="UPDATE article SET is_deleted=true WHERE id=?")
+@Where(clause = "is_deleted=false")
 public class Article {
 
   @Id
@@ -46,5 +53,8 @@ public class Article {
 
   @Column(name="like_count")
   private Integer likeCount;
+
+  @Column(name="is_deleted")
+  private Boolean isDeleted;
 
 }
