@@ -7,9 +7,6 @@ import org.likelion.be_study.comment.domain.Comment;
 import org.likelion.be_study.comment.persistence.CommentRepository;
 import org.likelion.be_study.comment.presentation.dto.CreateCommentRequest;
 import org.likelion.be_study.comment.presentation.dto.UpdateCommentRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +36,6 @@ public class CommentService {
 
     }
 
-
     @Transactional
     public void deleteComment(Long commentId) {
         if (!commentRepository.existsById(commentId)) {
@@ -48,4 +44,20 @@ public class CommentService {
 
         commentRepository.deleteById(commentId);
     }
+
+    public void increaseLikeCount(Long commentId) {
+        Comment comment = getComment(commentId);
+        comment.addLikeCount();
+    }
+    public void decreaseLikeCount(Long commentId) {
+        Comment comment = getComment(commentId);
+        comment.subLikeCount();
+    }
+
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    }
+
+
 }

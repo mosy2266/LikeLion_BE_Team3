@@ -1,5 +1,6 @@
 package org.likelion.be_study.comment.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +18,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SoftDelete;
 import org.likelion.be_study.base.BaseTimeEntity;
 import org.likelion.be_study.board.domain.Board;
+import org.likelion.be_study.like.domain.CommentLike;
 
 
 @Entity
@@ -33,6 +37,11 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<CommentLike> commentLikes;
+
+    private int likeCount;
+
     public void update(String content){
         this.content = content;
     }
@@ -44,6 +53,14 @@ public class Comment extends BaseTimeEntity {
     ) {
         this.content = content;
         this.board = board;
+    }
+
+    public void addLikeCount() {
+        this.likeCount++;
+    }
+
+    public void subLikeCount(){
+        this.likeCount--;
     }
 
 }
