@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import yun.likelion.be_study.annotations.LoginRequired;
 import yun.likelion.be_study.dto.boards.BoardsCreateRequestDto;
 import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
@@ -17,6 +18,7 @@ import yun.likelion.be_study.service.ViewCountService;
 @RestController
 @RequestMapping("/api/boards")
 @Tag(name = "Boards", description = "게시판 관련 API")
+@LoginRequired
 public class BoardsController {
     private final BoardsService boardsService;
     private final ViewCountService viewCountService;

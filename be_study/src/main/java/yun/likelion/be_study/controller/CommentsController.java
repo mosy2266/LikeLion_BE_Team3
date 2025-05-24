@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import yun.likelion.be_study.annotations.LoginRequired;
 import yun.likelion.be_study.dto.comments.CommentsCreateRequestDto;
 import yun.likelion.be_study.dto.comments.CommentsDeleteRequestDto;
 import yun.likelion.be_study.dto.comments.CommentsResponseDto;
@@ -14,6 +15,7 @@ import yun.likelion.be_study.service.CommentsService;
 @RestController
 @RequestMapping("/api/boards/{boardId}/comments")
 @Tag(name = "Comments", description = "댓글 관련 API")
+@LoginRequired
 public class CommentsController {
     private final CommentsService commentsService;
 
