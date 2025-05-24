@@ -18,6 +18,7 @@ import org.hibernate.annotations.SoftDelete;
 import org.likelion.be_study.base.BaseTimeEntity;
 import org.likelion.be_study.board.presentation.dto.UpdateBoardRequest;
 import org.likelion.be_study.comment.domain.Comment;
+import org.likelion.be_study.like.domain.BoardLike;
 
 @Entity
 @Table(name = "board")
@@ -40,6 +41,13 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardLike> boardLikes;
+
+    private int viewCount;
+
+    private int likeCount;
+
     @Builder
     public Board(
         String title,
@@ -49,11 +57,25 @@ public class Board extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.category = category;
+        this.viewCount = 0;
+        this.likeCount = 0;
     }
 
     public void update(UpdateBoardRequest request) {
         this.title = request.title();
         this.content = request.content();
         this.category = request.category();
+    }
+
+    public void addViewCount() {
+        this.viewCount++;
+    }
+
+    public void addLikeCount() {
+        this.likeCount++;
+    }
+
+    public void subLikeCount(){
+        this.likeCount--;
     }
 }

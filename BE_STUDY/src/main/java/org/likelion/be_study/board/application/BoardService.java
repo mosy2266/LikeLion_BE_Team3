@@ -27,9 +27,7 @@ public class BoardService {
 
     @Transactional
     public void updateBoard(Long boardId, UpdateBoardRequest boardRequest){
-        Board board = boardRepository.findById(boardId)
-            .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-
+        Board board = getBoard(boardId);
         board.update(boardRequest);
     }
 
@@ -42,9 +40,28 @@ public class BoardService {
 
     @Transactional
     public void deleteBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-            .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-
+        Board board = getBoard(boardId);
         boardRepository.delete(board);
     }
+
+    public void increaseViewCount(Long boardId){
+        Board board = getBoard(boardId);
+        board.addViewCount();
+    }
+
+    public void increaseLikeCount(Long boardId) {
+        Board board = getBoard(boardId);
+        board.addLikeCount();
+    }
+    public void decreaseLikeCount(Long boardId) {
+        Board board = getBoard(boardId);
+        board.subLikeCount();
+    }
+
+
+    public Board getBoard(Long boardId) {
+        return boardRepository.findById(boardId)
+            .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    }
+
 }
