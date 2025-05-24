@@ -4,12 +4,14 @@ import org.likelion.be_study.comment.domain.Comment;
 
 public record CommentResponse (
     Long commentId,
-    String content
+    String content,
+    int likeCount
 ) {
     public static CommentResponse of(final Comment comment) {
         return new CommentResponse(
             comment.getId(),
-            comment.getContent()
+            comment.getContent(),
+            comment.getLikeCount()
         );
     }
 }

@@ -42,7 +42,13 @@ public class BoardController {
         @RequestParam int page,
         @RequestParam int size
     ) {
-        List<BoardResponse> response = boardService.getBoardsByCategory(category, page, size);
+        List<BoardResponse> response = boardService.getAllBoardsByCategory(category, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("{boardId}")
+    public ResponseEntity<BoardResponse> getBoardById(@PathVariable Long boardId) {
+        BoardResponse response = boardService.getBoardById(boardId);
         return ResponseEntity.ok(response);
     }
 

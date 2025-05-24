@@ -31,7 +31,7 @@ public class BoardService {
         board.update(boardRequest);
     }
 
-    public List<BoardResponse> getBoardsByCategory(Category category, int page, int size) {
+    public List<BoardResponse> getAllBoardsByCategory(Category category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Board> boards = boardRepository.findByCategory(category, pageable);
 
@@ -39,13 +39,21 @@ public class BoardService {
     }
 
     @Transactional
+    public BoardResponse getBoardById(Long boardId) {
+        Board board = getBoard(boardId);
+        increaseViewCount(board);
+        return BoardResponse.of(board);
+    }
+
+
+    @Transactional
     public void deleteBoard(Long boardId) {
         Board board = getBoard(boardId);
         boardRepository.delete(board);
     }
 
-    public void increaseViewCount(Long boardId){
-        Board board = getBoard(boardId);
+
+    public void increaseViewCount(Board board){
         board.addViewCount();
     }
 
