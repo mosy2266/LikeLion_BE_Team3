@@ -1,4 +1,4 @@
-package org.example.be.global;
+package org.example.be.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
