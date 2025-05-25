@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.be.article.domain.Article;
 import org.example.be.like.domain.CommentLike;
+import org.example.be.user.domain.UserEntity;
 
 @Entity
 @Table(name="comment")
@@ -34,18 +35,22 @@ public class Comment {
   @Column(name="id")
   private Long id;
 
-  @Column(name="author")
-  private String author;
-
-  @Column(name="content")
-  private String content;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name="user_id")
+  private UserEntity user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name="article_id")
   private Article article;
 
+  @Column(name="content")
+  private String content;
+
   @Column(name="like_count")
   private Integer likeCount;
+
+  @Column(name="author")
+  private String author;
 
 }
 
