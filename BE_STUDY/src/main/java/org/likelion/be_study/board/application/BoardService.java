@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final ViewService viewService;
 
     @Transactional
     public void createBoard(CreateBoardRequest boardRequest){
@@ -39,9 +40,10 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse getBoardById(Long boardId) {
+    public BoardResponse getBoardById(Long boardId, Long memberId) {
         Board board = getBoard(boardId);
-        increaseViewCount(board);
+        viewService.handleViewCnt(boardId, memberId);
+
         return BoardResponse.of(board);
     }
 
@@ -52,10 +54,6 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
-
-    public void increaseViewCount(Board board){
-        board.addViewCount();
-    }
 
     public void increaseLikeCount(Long boardId) {
         Board board = getBoard(boardId);

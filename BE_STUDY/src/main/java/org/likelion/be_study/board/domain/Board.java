@@ -67,8 +67,8 @@ public class Board extends BaseTimeEntity {
         this.category = request.category();
     }
 
-    public void addViewCount() {
-        this.viewCount++;
+    public void addViewCount(int count) {
+        this.viewCount += count;
     }
 
     public void addLikeCount() {

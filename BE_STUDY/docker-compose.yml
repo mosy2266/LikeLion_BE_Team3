@@ -20,6 +20,18 @@ services:
       - be-study-database:/var/lib/mysql
     env_file:
       - .env
+  redis:
+    image: redis:7.0
+    container_name: be-study-redis
+    command: --port ${REDIS_PORT} --requirepass ${REDIS_PASSWORD}
+    expose:
+      - ${REDIS_PORT}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    restart: always
+    volumes:
+      - be-study-redis:/data
 
 volumes:
   be-study-database:
+  be-study-redis:
