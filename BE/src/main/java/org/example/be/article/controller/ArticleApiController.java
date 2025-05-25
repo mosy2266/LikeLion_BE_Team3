@@ -32,8 +32,12 @@ public class ArticleApiController {
   // 단일 게시글 조회
   @GetMapping("/{article_id}")
   public ResponseEntity<?> getArticle(
-      @PathVariable(name = "article_id") Long article_id
+      @PathVariable(name = "article_id") Long article_id,
+      @RequestParam(name = "user_id") Long userId
   ) {
+
+    articleService.incrementViewCount(article_id, userId);
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(articleService.findById(article_id));
   }

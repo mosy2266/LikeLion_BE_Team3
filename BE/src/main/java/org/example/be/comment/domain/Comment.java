@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.be.article.domain.Article;
-import org.example.be.like.domain.CommentLike;
 import org.example.be.user.domain.UserEntity;
 
 @Entity

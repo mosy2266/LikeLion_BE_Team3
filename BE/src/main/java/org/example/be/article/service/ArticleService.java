@@ -1,7 +1,9 @@
 package org.example.be.article.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.be.article.domain.Article;
 import org.example.be.article.dto.ArticleMapper;
 import org.example.be.article.dto.ArticleRequest;
@@ -10,15 +12,17 @@ import org.example.be.article.repository.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleService {
 
   private final ArticleRepository articleRepository;
   private final ArticleMapper articleMapper;
-
+  private final RedisTemplate<String, Object> redisTemplate;
 
   public ArticleResponse findById(Long articleId) {
     return articleMapper.toResponse(articleRepository.findById(articleId)
@@ -64,7 +68,6 @@ public class ArticleService {
     articleRepository.deleteById(articleId);
   }
 
-
   // 좋아요 누르기
   public ArticleResponse likeArticle(Long articleId){
     Article article = articleRepository.findById(articleId)
@@ -74,7 +77,6 @@ public class ArticleService {
     return articleMapper.toResponse(articleRepository.save(article));
   }
 
-
   // 좋아요 취소
   public ArticleResponse unlikeArticle(Long articleId){
     Article article = articleRepository.findById(articleId)
@@ -83,5 +85,19 @@ public class ArticleService {
     if(article.getLikeCount()>0)
       article.setLikeCount(article.getLikeCount()-1);
     return articleMapper.toResponse(articleRepository.save(article));
+  }
+
+  // 게시글 조회 시 조회수 증가
+  public void incrementViewCount(Long articleId, Long userId){
+    String userViewKey = "view:" + userId + ":article:" + articleId;
+
+    Boolean isViewed = redisTemplate.hasKey(userViewKey);
+
+    if(!isViewed){
+      String articleViewKey = "article:view:count:"+articleId;
+      redisTemplate.opsForValue().increment(articleViewKey);
+      // 시간 간격 1시간으로 설정
+      redisTemplate.opsForValue().set(userViewKey, true, 1, TimeUnit.HOURS);
+    }
   }
 }
