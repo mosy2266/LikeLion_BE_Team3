@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.be.comment.domain.Comment;
-import org.example.be.like.domain.ArticleLike;
 import org.example.be.user.domain.UserEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SoftDelete;
@@ -57,6 +56,9 @@ public class Article {
 
   @Column(name="like_count")
   private Integer likeCount;
+
+  @Column(name="view_count")
+  private int viewCount;
 
   @Column(name="is_deleted")
   private Boolean isDeleted;

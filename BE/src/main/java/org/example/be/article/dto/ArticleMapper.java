@@ -29,6 +29,7 @@ public class ArticleMapper {
         .title(entity.getTitle())
         .content(entity.getContent())
         .likeCount(entity.getLikeCount())
+        .viewCount(entity.getViewCount())
         .commentList(entity.getCommentList().stream()
             .map(commentMapper::toResponse).toList())
         .build();
