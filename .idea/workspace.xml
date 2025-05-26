@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18fc01ba-5d5b-45aa-8cb0-ecaf739b0621" name="Changes" comment="" />
+    <list default="true" id="18fc01ba-5d5b-45aa-8cb0-ecaf739b0621" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -87,7 +89,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.BeStudyApplication.executor": "Run",
-    "git-widget-placeholder": "aop",
+    "git-widget-placeholder": "spring__security",
     "last_opened_file_path": "C:/Users/Yoon/Desktop/coding/likelion/LikeLion_BE_Team3",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -174,6 +176,8 @@
       <updated>1747989054060</updated>
       <workItem from="1747989055644" duration="647000" />
       <workItem from="1748073054047" duration="6150000" />
+      <workItem from="1748174091046" duration="613000" />
+      <workItem from="1748176468723" duration="51000" />
     </task>
     <servers />
   </component>

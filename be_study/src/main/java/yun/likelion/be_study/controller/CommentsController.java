@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yun.likelion.be_study.dto.comments.CommentsCreateRequestDto;
-import yun.likelion.be_study.dto.comments.CommentsDeleteRequestDto;
 import yun.likelion.be_study.dto.comments.CommentsResponseDto;
 import yun.likelion.be_study.dto.comments.CommentsUpdateRequestDto;
 import yun.likelion.be_study.service.CommentsService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards/{boardId}/comments")
@@ -43,11 +45,16 @@ public class CommentsController {
     //댓글 삭제
     @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long boardId,
-                                                @PathVariable Long commentId,
-                                                @RequestBody @Valid CommentsDeleteRequestDto dto) {
-        commentsService.deleteComment(boardId, commentId, dto.getPassword());
+    public ResponseEntity<String> deleteComment(@PathVariable Long boardId, @PathVariable Long commentId) {
+        commentsService.deleteComment(boardId, commentId);
         return ResponseEntity.ok("댓글이 삭제되었습니다.");
+    }
+
+    //작성 댓글 목록
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<CommentsResponseDto>> getMyComments(@PathVariable Long boardId) {
+        return ResponseEntity.ok(commentsService.getMyComments(boardId));
     }
 
     //댓글 좋아요

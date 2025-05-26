@@ -1,0 +1,46 @@
+package yun.likelion.be_study.entity;
+
+import static com.querydsl.core.types.PathMetadataFactory.*;
+
+import com.querydsl.core.types.dsl.*;
+
+import com.querydsl.core.types.PathMetadata;
+import javax.annotation.processing.Generated;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
+
+
+/**
+ * QMembers is a Querydsl query type for Members
+ */
+@Generated("com.querydsl.codegen.DefaultEntitySerializer")
+public class QMembers extends EntityPathBase<Members> {
+
+    private static final long serialVersionUID = 559602704L;
+
+    public static final QMembers members = new QMembers("members");
+
+    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+
+    public final StringPath nickname = createString("nickname");
+
+    public final StringPath password = createString("password");
+
+    public final ListPath<String, StringPath> roles = this.<String, StringPath>createList("roles", String.class, StringPath.class, PathInits.DIRECT2);
+
+    public final StringPath username = createString("username");
+
+    public QMembers(String variable) {
+        super(Members.class, forVariable(variable));
+    }
+
+    public QMembers(Path<? extends Members> path) {
+        super(path.getType(), path.getMetadata());
+    }
+
+    public QMembers(PathMetadata metadata) {
+        super(Members.class, metadata);
+    }
+
+}
+

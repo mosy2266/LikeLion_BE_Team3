@@ -26,7 +26,7 @@ public class BoardsSimpleResponseDto {
     public static BoardsSimpleResponseDto from(Boards board) {
         return BoardsSimpleResponseDto.builder()
                 .boardsId(board.getBoardId())
-                .name(board.getName())
+                .name(board.getMember().getNickname())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .createdDate(board.getCreatedDate())

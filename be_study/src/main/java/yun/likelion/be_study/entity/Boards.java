@@ -25,9 +25,6 @@ public class Boards extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
 
-    @NotBlank
-    private String name;
-
     @NotBlank(message = "제목은 반드시 입력해야 합니다.")
     private String title;
 
@@ -43,6 +40,10 @@ public class Boards extends BaseTimeEntity {
     //논리적 삭제를 위한 필드
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id",  nullable = false)
+    private Members member;
 
     //양방향 매핑 추가
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

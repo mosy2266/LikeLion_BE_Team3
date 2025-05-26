@@ -14,24 +14,24 @@ import yun.likelion.be_study.dto.boards.BoardsDetailResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsSimpleResponseDto;
 import yun.likelion.be_study.dto.boards.BoardsUpdateRequestDto;
 import yun.likelion.be_study.entity.Boards;
+import yun.likelion.be_study.entity.Members;
 import yun.likelion.be_study.entity.QBoards;
 import yun.likelion.be_study.exception.DeletedBoardException;
 import yun.likelion.be_study.repository.BoardsRepository;
-import yun.likelion.be_study.repository.CommentsRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static yun.likelion.be_study.util.SecurityUtils.getLoginMember;
+import static yun.likelion.be_study.util.SecurityUtils.validateMember;
+
 @Service
 public class BoardsService {
     private final BoardsRepository boardsRepository;
-    private final CommentsRepository commentsRepository;
     private final JPAQueryFactory queryFactory;
 
-    public BoardsService(BoardsRepository boardsRepository, CommentsRepository commentsRepository,
-                         JPAQueryFactory queryFactory) {
+    public BoardsService(BoardsRepository boardsRepository, JPAQueryFactory queryFactory) {
         this.boardsRepository = boardsRepository;
-        this.commentsRepository = commentsRepository;
         this.queryFactory = queryFactory;
     }
 
@@ -47,13 +47,13 @@ public class BoardsService {
     //게시글 목록
     @Transactional(readOnly = true)
     //QueryDSL 적용 -> 동적 쿼리를 통해 게시판 검색 기능 구현
-    public Page<BoardsSimpleResponseDto> getAllBoards(String name, String keyword, Pageable pageable) {
+    public Page<BoardsSimpleResponseDto> getAllBoards(String nickname, String keyword, Pageable pageable) {
         QBoards b =  QBoards.boards;
 
         //동적 검색 조건 빌더 : 이름과 키워드
         BooleanBuilder builder = new BooleanBuilder();
-        if (name != null && !name.isBlank()) {
-            builder.and(b.name.eq(name));
+        if (nickname != null && !nickname.isBlank()) {
+            builder.and(b.member.nickname.eq(nickname));
         }
         if (keyword != null && !keyword.isBlank()) {
             builder.and(
@@ -95,8 +95,9 @@ public class BoardsService {
     //게시글 작성
     public BoardsSimpleResponseDto createBoard(BoardsCreateRequestDto boardsCreateRequestDto) {
         Boards board = new Boards();
+        Members loginMember = getLoginMember();
 
-        board.setName(boardsCreateRequestDto.getName());
+        board.setMember(loginMember);
         board.setTitle(boardsCreateRequestDto.getTitle());
         board.setContent(boardsCreateRequestDto.getContent());
         boardsRepository.save(board);
@@ -133,6 +134,9 @@ public class BoardsService {
         Boards board = boardsRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
 
+        Members loginMember = getLoginMember();
+        validateMember(board.getMember(), loginMember);
+
         board.setTitle(boardsUpdateRequestDto.getTitle());
         board.setContent(boardsUpdateRequestDto.getContent());
 
@@ -142,10 +146,11 @@ public class BoardsService {
     //게시글 삭제
     @Transactional
     public void deleteBoard(Long boardId) {
-        //삭제 로직에서는 존재 여부만 체크하면 되므로 existsById()
-        if (!boardsRepository.existsById(boardId)) {
-            throw new EntityNotFoundException("there is no board with id " + boardId);
-        }
+        Boards board = boardsRepository.findById(boardId)
+                        .orElseThrow(() -> new EntityNotFoundException("there is no board with id " + boardId));
+        Members loginMember = getLoginMember();
+
+        validateMember(board.getMember(), loginMember);
         boardsRepository.deleteById(boardId);
     }
 

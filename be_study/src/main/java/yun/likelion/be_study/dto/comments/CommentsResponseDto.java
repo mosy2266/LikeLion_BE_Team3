@@ -19,7 +19,7 @@ public class CommentsResponseDto {
     public static CommentsResponseDto from(Comments comments) {
         return CommentsResponseDto.builder()
                 .commentId(comments.getCommentId())
-                .nickname(comments.getNickname())
+                .nickname(comments.getMember().getNickname())
                 .content(comments.getContent())
                 .likeCount(comments.getLikeCount())
                 .build();

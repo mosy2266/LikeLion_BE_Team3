@@ -23,11 +23,9 @@ public class Comments {
     @JoinColumn(name = "board_id", nullable = false)
     private Boards board;
 
-    @NotBlank
-    private String nickname;
-
-    @NotBlank
-    private String password;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Members member;
 
     @NotBlank
     private String content;

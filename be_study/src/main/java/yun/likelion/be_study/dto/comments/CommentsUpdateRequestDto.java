@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentsUpdateRequestDto {
-
-    @NotBlank
-    private String password;
-
     @NotBlank
     private String content;
 }
