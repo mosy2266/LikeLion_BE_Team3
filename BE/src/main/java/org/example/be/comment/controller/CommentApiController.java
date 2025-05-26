@@ -80,22 +80,4 @@ public class CommentApiController {
         .body("delete completed");
   }
 
-  // 댓글 좋아요 기능
-  @GetMapping("/{comment_id}/like")
-  public ResponseEntity<?> likeComment(@PathVariable(name="comment_id") Long commentId){
-    CommentResponse response = commentService.likeComment(commentId);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(response);
-
-  }
-
-  // 댓글 좋아요 취소
-  @GetMapping("/{comment_id}/unlike")
-  public ResponseEntity<?> unlikeComment(@PathVariable(name="comment_id") Long commentId){
-    CommentResponse response = commentService.likeComment(commentId);
-
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(response);
-  }
 }

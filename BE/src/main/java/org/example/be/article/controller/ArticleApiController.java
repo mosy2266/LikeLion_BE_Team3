@@ -88,21 +88,4 @@ public class ArticleApiController {
         .body("delete completed");
   }
 
-  // 게시글 좋아요
-  @GetMapping("/{article_id}/like")
-  public ResponseEntity<?> likeArticle(
-      @PathVariable(name="article_id") Long articleId
-  ){
-      return ResponseEntity.status(HttpStatus.OK)
-          .body(articleService.likeArticle(articleId));
-  }
-
-  // 게시글 좋아요 취소
-  @GetMapping("/{article_id}/unlike")
-  public ResponseEntity<?> unlikeArticle(
-      @PathVariable(name="article_id") Long articleId
-  ){
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(articleService.unlikeArticle(articleId));
-  }
 }

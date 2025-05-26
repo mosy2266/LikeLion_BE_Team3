@@ -15,7 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.be.article.domain.Article;
+import org.example.be.article.domain.ArticleLike;
 import org.example.be.comment.domain.Comment;
+import org.example.be.comment.domain.CommentLike;
 
 @Entity
 @Table(name="users")
@@ -35,6 +37,12 @@ public class UserEntity {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ArticleLike> articleLikeList;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CommentLike> commentLikeList;
 
   @Column(name="username")
   private String username;

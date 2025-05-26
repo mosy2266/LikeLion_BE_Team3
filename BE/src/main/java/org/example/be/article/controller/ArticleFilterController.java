@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,6 +94,52 @@ public class ArticleFilterController {
 
     return ResponseEntity.status(HttpStatus.OK)
         .body("delete completed");
+  }
+
+
+  // 좋아요 누르기
+  @PostMapping("/{article_id}/like")
+  public ResponseEntity<?> likeArticle(
+      @PathVariable(name = "article_id") Long articleId,
+      HttpServletRequest request
+  ) {
+    if(request.getAttribute("userId") == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    }
+
+    Long userId = Long.parseLong(request.getAttribute("userId").toString());
+
+    try {
+      articleService.likeArticle(articleId, userId);
+      return ResponseEntity.status(HttpStatus.CREATED).body("좋아요 완료");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 중복 좋아요
+    }
+  }
+
+
+  // 좋아요 취소
+  @DeleteMapping("/{article_id}/like")
+  public ResponseEntity<?> unlikeArticle(
+      @PathVariable(name = "article_id") Long articleId,
+      HttpServletRequest request
+  ) {
+    if(request.getAttribute("userId") == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    }
+
+    Long userId = Long.parseLong(request.getAttribute("userId").toString());
+
+    try {
+      articleService.unlikeArticle(articleId, userId);
+      return ResponseEntity.status(HttpStatus.CREATED).body("좋아요 취소 완료");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
   }
 
 }
